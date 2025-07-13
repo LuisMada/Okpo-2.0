@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function StackList({ stacks, onEdit, onRefresh }) {
   const [searchTerm, setSearchTerm] = useState('')
@@ -38,11 +38,35 @@ export default function StackList({ stacks, onEdit, onRefresh }) {
     }
   }
 
+  const handleDeleteStack = async (stack) => {
+    if (!confirm(`Are you sure you want to delete "${stack.name}"?\n\nThis action cannot be undone.`)) {
+      return
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/stacks/${stack.id}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        alert(data.message)
+        onRefresh() // Refresh the stack list
+      } else {
+        const error = await response.json()
+        alert(`Error: ${error.detail}`)
+      }
+    } catch (error) {
+      console.error('Error deleting stack:', error)
+      alert('Failed to delete stack. Please try again.')
+    }
+  }
+
   const CompilerPreview = ({ stackId }) => {
     const [compiled, setCompiled] = useState(null)
     const [loading, setLoading] = useState(true)
 
-    useState(() => {
+    useEffect(() => {
       const fetchCompiled = async () => {
         try {
           const response = await fetch(`http://localhost:8000/api/stacks/${stackId}/compile`)
@@ -82,15 +106,37 @@ export default function StackList({ stacks, onEdit, onRefresh }) {
                   <span className="text-sm font-medium text-gray-900">
                     {section.prompt_name}
                   </span>
+                  {section.chunks && section.chunks.length > 1 && (
+                    <span className="text-xs text-okpo-600">
+                      ({section.chunks.length} blocks)
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-500">
                   <span>Weight: {section.weight}</span>
                   {section.locked && <span className="text-red-600">🔒</span>}
                 </div>
               </div>
-              <div className="text-xs font-mono text-gray-700 bg-white rounded p-2 max-h-24 overflow-y-auto">
-                {section.content}
-              </div>
+              
+              {/* Show individual chunks if multiple blocks */}
+              {section.chunks && section.chunks.length > 1 ? (
+                <div className="space-y-2">
+                  {section.chunks.map((chunk, chunkIndex) => (
+                    <div key={chunk.id} className="bg-white rounded p-2 border-l-2 border-okpo-300">
+                      <div className="text-xs font-medium text-okpo-600 mb-1">
+                        Block {chunkIndex + 1}
+                      </div>
+                      <div className="text-xs font-mono text-gray-700 max-h-20 overflow-y-auto">
+                        {section.content.split('\n\n')[chunkIndex] || section.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs font-mono text-gray-700 bg-white rounded p-2 max-h-24 overflow-y-auto">
+                  {section.content}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -179,6 +225,12 @@ export default function StackList({ stacks, onEdit, onRefresh }) {
                     className="btn-secondary text-sm"
                   >
                     {expandedStack === stack.id ? 'Hide' : 'Preview'}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteStack(stack)}
+                    className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>

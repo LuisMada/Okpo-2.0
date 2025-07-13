@@ -196,9 +196,19 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
             placeholder="Enter the prompt logic here..."
             required
           />
-          <div className="text-sm text-gray-500 mt-1">
-            {formData.content.length} characters
+          <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
+            <span>{formData.content.length} characters</span>
+            {formData.content.includes('\n\n') && (
+              <span className="text-okpo-600">
+                Will create {formData.content.split('\n\n').filter(chunk => chunk.trim()).length} blocks
+              </span>
+            )}
           </div>
+          {formData.content.includes('\n\n') && (
+            <div className="mt-2 text-xs text-gray-600 bg-blue-50 p-2 rounded">
+              💡 <strong>Auto-chunking:</strong> Content will be split into reorderable blocks at double line breaks (paragraph separations)
+            </div>
+          )}
         </div>
 
         {/* Tags */}

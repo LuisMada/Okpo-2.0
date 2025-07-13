@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import ChunkReorder from './ChunkReorder'
 
 export default function StackComposer({ stack, prompts, layerTypes, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     prompts: {},      // layer_type -> prompt_id
+    chunk_orders: {}, // layer_type -> [chunk_ids]
     weights: {},      // layer_type -> weight
     locks: {},        // layer_type -> boolean
     author: 'User'
@@ -20,6 +22,7 @@ export default function StackComposer({ stack, prompts, layerTypes, onSave, onCa
         name: stack.name || '',
         description: stack.description || '',
         prompts: stack.prompts || {},
+        chunk_orders: stack.chunk_orders || {},
         weights: stack.weights || {},
         locks: stack.locks || {},
         author: 'User'
@@ -30,6 +33,7 @@ export default function StackComposer({ stack, prompts, layerTypes, onSave, onCa
         name: '',
         description: '',
         prompts: {},
+        chunk_orders: {},
         weights: {},
         locks: {},
         author: 'User'
@@ -79,6 +83,16 @@ export default function StackComposer({ stack, prompts, layerTypes, onSave, onCa
       locks: {
         ...prev.locks,
         [layerType]: locked
+      }
+    }))
+  }
+
+  const handleChunkOrderChange = (layerType, chunkOrder) => {
+    setFormData(prev => ({
+      ...prev,
+      chunk_orders: {
+        ...prev.chunk_orders,
+        [layerType]: chunkOrder
       }
     }))
   }
@@ -251,6 +265,11 @@ export default function StackComposer({ stack, prompts, layerTypes, onSave, onCa
                         {selectedPrompt && (
                           <div className="mt-2 text-xs text-gray-600">
                             {selectedPrompt.description}
+                            {selectedPrompt.chunks && selectedPrompt.chunks.length > 1 && (
+                              <span className="ml-2 px-2 py-0.5 bg-okpo-100 text-okpo-800 rounded">
+                                {selectedPrompt.chunks.length} blocks
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>
@@ -281,6 +300,15 @@ export default function StackComposer({ stack, prompts, layerTypes, onSave, onCa
                         </div>
                       </div>
                     </div>
+
+                    {/* Chunk Reordering Interface */}
+                    {selectedPrompt && selectedPrompt.chunks && selectedPrompt.chunks.length > 1 && (
+                      <ChunkReorder
+                        chunks={selectedPrompt.chunks}
+                        layerType={layer.name}
+                        onOrderChange={handleChunkOrderChange}
+                      />
+                    )}
                   </div>
                 )
               })}

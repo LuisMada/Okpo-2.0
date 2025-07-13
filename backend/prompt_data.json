@@ -13,7 +13,15 @@
       "tags": [
         "test"
       ],
-      "parent_id": null
+      "parent_id": null,
+      "chunks": [
+        {
+          "id": "block_1",
+          "label": "Block 1",
+          "content": "You are a restaurant booking assistant. Help users reserve tables by asking for the date, time, number of guests, and any special requests. Confirm availability, suggest alternatives if needed, and keep the tone friendly and efficient.",
+          "order": 1
+        }
+      ]
     },
     "2970c516-696e-4213-a63b-b8af0373cbbf": {
       "id": "2970c516-696e-4213-a63b-b8af0373cbbf",
@@ -28,7 +36,15 @@
       "tags": [
         "test"
       ],
-      "parent_id": null
+      "parent_id": null,
+      "chunks": [
+        {
+          "id": "block_1",
+          "label": "Block 1",
+          "content": "You are a restaurant policy and compliance assistant. Respond to staff or customer inquiries about rules on reservations, cancellations, dress codes, service standards, health protocols, or payment policies. Ensure all responses are accurate, professional, and aligned with restaurant guidelines. Flag any non-compliance or unclear cases for manager review.",
+          "order": 1
+        }
+      ]
     },
     "6198b9b7-7cc4-461f-92ac-f9ff59e58ab2": {
       "id": "6198b9b7-7cc4-461f-92ac-f9ff59e58ab2",
@@ -39,6 +55,49 @@
       "version": 1,
       "author": "User",
       "created_at": "2025-07-13T22:34:46.521163",
+      "change_comment": "init",
+      "tags": [
+        "test"
+      ],
+      "parent_id": null,
+      "chunks": [
+        {
+          "id": "block_1",
+          "label": "Block 1",
+          "content": "Content: Help customers make restaurant reservations. \nAlways ask for: date, time, party size, and any special requests.\nCheck availability and confirm booking details.",
+          "order": 1
+        }
+      ]
+    },
+    "d6375afa-6392-4052-a34c-db3b6fd38cba": {
+      "id": "d6375afa-6392-4052-a34c-db3b6fd38cba",
+      "name": "Customer HR Bot",
+      "description": "Test",
+      "content": "You are a restaurant booking assistant. Help customers make reservations.\n\nAlways ask for date, time, and party size before proceeding.\n\nIf no availability, suggest alternatives within 30 minutes.",
+      "chunks": [
+        {
+          "id": "block_1",
+          "label": "Block 1",
+          "content": "You are a restaurant booking assistant. Help customers make reservations.",
+          "order": 1
+        },
+        {
+          "id": "block_2",
+          "label": "Block 2",
+          "content": "Always ask for date, time, and party size before proceeding.",
+          "order": 2
+        },
+        {
+          "id": "block_3",
+          "label": "Block 3",
+          "content": "If no availability, suggest alternatives within 30 minutes.",
+          "order": 3
+        }
+      ],
+      "layer_type": "global",
+      "version": 1,
+      "author": "User",
+      "created_at": "2025-07-13T23:48:07.651622",
       "change_comment": "init",
       "tags": [
         "test"
@@ -57,7 +116,8 @@
       "weights": {},
       "locks": {},
       "created_at": "2025-07-13T22:29:41.378694",
-      "author": "User"
+      "author": "User",
+      "chunk_orders": {}
     },
     "f9baaa86-cb3c-4b3b-be79-91dd94058c46": {
       "id": "f9baaa86-cb3c-4b3b-be79-91dd94058c46",
@@ -69,7 +129,8 @@
       "weights": {},
       "locks": {},
       "created_at": "2025-07-13T22:31:26.510625",
-      "author": "User"
+      "author": "User",
+      "chunk_orders": {}
     },
     "3ac1dd60-042e-4e45-8be0-733181746a17": {
       "id": "3ac1dd60-042e-4e45-8be0-733181746a17",
@@ -81,7 +142,8 @@
       "weights": {},
       "locks": {},
       "created_at": "2025-07-13T22:31:30.119896",
-      "author": "User"
+      "author": "User",
+      "chunk_orders": {}
     },
     "4ac9bfbe-7049-4e0c-a032-4bffd53660c9": {
       "id": "4ac9bfbe-7049-4e0c-a032-4bffd53660c9",
@@ -93,7 +155,8 @@
       "weights": {},
       "locks": {},
       "created_at": "2025-07-13T22:31:34.695878",
-      "author": "User"
+      "author": "User",
+      "chunk_orders": {}
     },
     "10e8aafc-a513-47ac-bdbf-6a51b4a56e6d": {
       "id": "10e8aafc-a513-47ac-bdbf-6a51b4a56e6d",
@@ -107,6 +170,28 @@
       "weights": {},
       "locks": {},
       "created_at": "2025-07-13T22:35:17.099427",
+      "author": "User",
+      "chunk_orders": {}
+    },
+    "545ede29-c931-4c49-9b50-f585a3bff0b0": {
+      "id": "545ede29-c931-4c49-9b50-f585a3bff0b0",
+      "name": "tes",
+      "description": "tes",
+      "prompts": {
+        "global": "d6375afa-6392-4052-a34c-db3b6fd38cba",
+        "company": "2970c516-696e-4213-a63b-b8af0373cbbf",
+        "task": "6198b9b7-7cc4-461f-92ac-f9ff59e58ab2"
+      },
+      "chunk_orders": {
+        "global": [
+          "block_1",
+          "block_2",
+          "block_3"
+        ]
+      },
+      "weights": {},
+      "locks": {},
+      "created_at": "2025-07-13T23:48:57.804367",
       "author": "User"
     }
   },

@@ -40,6 +40,30 @@ export default function PromptList({ prompts, layerTypes, onEdit, onRefresh }) {
     }
   }
 
+  const handleDeletePrompt = async (prompt) => {
+    if (!confirm(`Are you sure you want to delete "${prompt.name}"?\n\nThis action cannot be undone.`)) {
+      return
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/prompts/${prompt.id}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        alert(data.message)
+        onRefresh() // Refresh the prompt list
+      } else {
+        const error = await response.json()
+        alert(`Error: ${error.detail}`)
+      }
+    } catch (error) {
+      console.error('Error deleting prompt:', error)
+      alert('Failed to delete prompt. Please try again.')
+    }
+  }
+
   return (
     <div className="space-y-4">
       {/* Filters */}
@@ -116,14 +140,35 @@ export default function PromptList({ prompts, layerTypes, onEdit, onRefresh }) {
                     </div>
                   )}
 
-                  {/* Content Preview */}
+                  {/* Content Preview with Chunks */}
                   <div className="bg-gray-50 rounded p-3 mb-3">
-                    <div className="text-xs font-mono text-gray-700 line-clamp-3">
-                      {prompt.content.length > 150 
-                        ? prompt.content.substring(0, 150) + '...'
-                        : prompt.content
-                      }
-                    </div>
+                    {prompt.chunks && prompt.chunks.length > 1 ? (
+                      <div className="space-y-2">
+                        <div className="text-xs text-gray-500 mb-2">
+                          {prompt.chunks.length} blocks:
+                        </div>
+                        {prompt.chunks.map((chunk, index) => (
+                          <div key={chunk.id} className="bg-white rounded p-2 border-l-2 border-okpo-300">
+                            <div className="text-xs font-medium text-okpo-600 mb-1">
+                              Block {index + 1}
+                            </div>
+                            <div className="text-xs font-mono text-gray-700">
+                              {chunk.content.length > 100 
+                                ? chunk.content.substring(0, 100) + '...'
+                                : chunk.content
+                              }
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-xs font-mono text-gray-700 line-clamp-3">
+                        {prompt.content.length > 150 
+                          ? prompt.content.substring(0, 150) + '...'
+                          : prompt.content
+                        }
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -140,6 +185,12 @@ export default function PromptList({ prompts, layerTypes, onEdit, onRefresh }) {
                     className="btn-secondary text-sm"
                   >
                     Versions
+                  </button>
+                  <button
+                    onClick={() => handleDeletePrompt(prompt)}
+                    className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>
