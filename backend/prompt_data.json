@@ -1,0 +1,145 @@
+{
+  "prompts": {
+    "d1e37690-c81b-450a-a16b-99ff3dac973c": {
+      "id": "d1e37690-c81b-450a-a16b-99ff3dac973c",
+      "name": "Restaurant for HR",
+      "description": "Booking for restaurants",
+      "content": "You are a restaurant booking assistant. Help users reserve tables by asking for the date, time, number of guests, and any special requests. Confirm availability, suggest alternatives if needed, and keep the tone friendly and efficient.",
+      "layer_type": "global",
+      "version": 1,
+      "author": "User",
+      "created_at": "2025-07-13T22:28:39.293014",
+      "change_comment": "init",
+      "tags": [
+        "test"
+      ],
+      "parent_id": null
+    },
+    "2970c516-696e-4213-a63b-b8af0373cbbf": {
+      "id": "2970c516-696e-4213-a63b-b8af0373cbbf",
+      "name": "Restaurant Policies and Service Compliance",
+      "description": "Policies",
+      "content": "You are a restaurant policy and compliance assistant. Respond to staff or customer inquiries about rules on reservations, cancellations, dress codes, service standards, health protocols, or payment policies. Ensure all responses are accurate, professional, and aligned with restaurant guidelines. Flag any non-compliance or unclear cases for manager review.",
+      "layer_type": "company",
+      "version": 1,
+      "author": "User",
+      "created_at": "2025-07-13T22:30:44.809965",
+      "change_comment": "init",
+      "tags": [
+        "test"
+      ],
+      "parent_id": null
+    },
+    "6198b9b7-7cc4-461f-92ac-f9ff59e58ab2": {
+      "id": "6198b9b7-7cc4-461f-92ac-f9ff59e58ab2",
+      "name": "Restaurant Booking Assistant",
+      "description": "Instructions",
+      "content": "Content: Help customers make restaurant reservations. \nAlways ask for: date, time, party size, and any special requests.\nCheck availability and confirm booking details.",
+      "layer_type": "task",
+      "version": 1,
+      "author": "User",
+      "created_at": "2025-07-13T22:34:46.521163",
+      "change_comment": "init",
+      "tags": [
+        "test"
+      ],
+      "parent_id": null
+    }
+  },
+  "stacks": {
+    "a5f2d67a-74a7-4651-af3a-4ac1936aa543": {
+      "id": "a5f2d67a-74a7-4651-af3a-4ac1936aa543",
+      "name": "Customer Service Agent",
+      "description": "",
+      "prompts": {
+        "global": "d1e37690-c81b-450a-a16b-99ff3dac973c"
+      },
+      "weights": {},
+      "locks": {},
+      "created_at": "2025-07-13T22:29:41.378694",
+      "author": "User"
+    },
+    "f9baaa86-cb3c-4b3b-be79-91dd94058c46": {
+      "id": "f9baaa86-cb3c-4b3b-be79-91dd94058c46",
+      "name": "Customer Service Agent",
+      "description": "",
+      "prompts": {
+        "global": "d1e37690-c81b-450a-a16b-99ff3dac973c"
+      },
+      "weights": {},
+      "locks": {},
+      "created_at": "2025-07-13T22:31:26.510625",
+      "author": "User"
+    },
+    "3ac1dd60-042e-4e45-8be0-733181746a17": {
+      "id": "3ac1dd60-042e-4e45-8be0-733181746a17",
+      "name": "Customer Service Agent",
+      "description": "",
+      "prompts": {
+        "global": "d1e37690-c81b-450a-a16b-99ff3dac973c"
+      },
+      "weights": {},
+      "locks": {},
+      "created_at": "2025-07-13T22:31:30.119896",
+      "author": "User"
+    },
+    "4ac9bfbe-7049-4e0c-a032-4bffd53660c9": {
+      "id": "4ac9bfbe-7049-4e0c-a032-4bffd53660c9",
+      "name": "Customer Service Agent",
+      "description": "",
+      "prompts": {
+        "global": "d1e37690-c81b-450a-a16b-99ff3dac973c"
+      },
+      "weights": {},
+      "locks": {},
+      "created_at": "2025-07-13T22:31:34.695878",
+      "author": "User"
+    },
+    "10e8aafc-a513-47ac-bdbf-6a51b4a56e6d": {
+      "id": "10e8aafc-a513-47ac-bdbf-6a51b4a56e6d",
+      "name": "Restaurant Booker",
+      "description": "For Booking",
+      "prompts": {
+        "global": "d1e37690-c81b-450a-a16b-99ff3dac973c",
+        "company": "2970c516-696e-4213-a63b-b8af0373cbbf",
+        "task": "6198b9b7-7cc4-461f-92ac-f9ff59e58ab2"
+      },
+      "weights": {},
+      "locks": {},
+      "created_at": "2025-07-13T22:35:17.099427",
+      "author": "User"
+    }
+  },
+  "layer_types": {
+    "global": {
+      "name": "global",
+      "description": "Universal rules and constraints",
+      "order": 1,
+      "required": true
+    },
+    "company": {
+      "name": "company",
+      "description": "Brand voice and company-specific guidelines",
+      "order": 2,
+      "required": false
+    },
+    "task": {
+      "name": "task",
+      "description": "Specific task instructions",
+      "order": 3,
+      "required": true
+    },
+    "campaign": {
+      "name": "campaign",
+      "description": "Campaign or project-specific context",
+      "order": 4,
+      "required": false
+    },
+    "memory": {
+      "name": "memory",
+      "description": "Session memory and context",
+      "order": 5,
+      "required": false
+    }
+  }
+}

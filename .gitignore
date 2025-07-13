@@ -1,0 +1,27 @@
+# === FRONTEND (Next.js) ===
+frontend/.next/
+frontend/node_modules/
+frontend/out/
+frontend/dist/
+frontend/.env.local
+frontend/.env*
+
+# === BACKEND (FastAPI / Python) ===
+backend/venv/
+backend/__pycache__/
+backend/*.py[cod]
+backend/.env
+backend/.mypy_cache/
+backend/.pytest_cache/
+
+# === SYSTEM FILES ===
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.swo
+
+# === PYTHON CACHES (in case) ===
+*.egg-info/
+.eggs/
+*.pyo
