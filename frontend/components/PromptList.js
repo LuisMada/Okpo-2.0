@@ -65,96 +65,140 @@ export default function PromptList({ prompts, layerTypes, onEdit, onRefresh }) {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <input
-            type="text"
-            placeholder="Search prompts..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input-field"
-          />
-        </div>
-        <div>
-          <select
-            value={filterLayer}
-            onChange={(e) => setFilterLayer(e.target.value)}
-            className="input-field"
-          >
-            <option value="all">All Layers</option>
-            {layerTypes.map((layer) => (
-              <option key={layer.name} value={layer.name}>
-                {layer.name.charAt(0).toUpperCase() + layer.name.slice(1)}
-              </option>
-            ))}
-          </select>
+    <div className="space-y-6">
+      {/* Enhanced Filters */}
+      <div className="card p-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1 relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search prompts..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="input-field pl-10"
+            />
+          </div>
+          <div className="sm:w-48">
+            <select
+              value={filterLayer}
+              onChange={(e) => setFilterLayer(e.target.value)}
+              className="input-field"
+            >
+              <option value="all">All Layers</option>
+              {layerTypes.map((layer) => (
+                <option key={layer.name} value={layer.name}>
+                  {layer.name.charAt(0).toUpperCase() + layer.name.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Prompt Cards */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filteredPrompts.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            {prompts.length === 0 ? 'No prompts created yet' : 'No prompts match your filters'}
+          <div className="card text-center py-12">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              {prompts.length === 0 ? (
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              ) : (
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              )}
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              {prompts.length === 0 ? 'No prompts created yet' : 'No prompts match your filters'}
+            </h3>
+            <p className="text-gray-600">
+              {prompts.length === 0 
+                ? 'Create your first prompt to get started' 
+                : 'Try adjusting your search or filter criteria'
+              }
+            </p>
           </div>
         ) : (
           filteredPrompts.map((prompt) => (
             <div
               key={prompt.id}
-              className="card hover:shadow-md transition-shadow duration-200"
+              className="card card-hover"
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h4 className="font-medium text-gray-900">{prompt.name}</h4>
+                  <div className="flex items-center space-x-3 mb-3">
+                    <h4 className="font-semibold text-gray-900 text-lg">{prompt.name}</h4>
                     <span className={getLayerBadgeClass(prompt.layer_type)}>
                       {prompt.layer_type}
                     </span>
-                    <span className="text-sm text-gray-500">v{prompt.version}</span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      v{prompt.version}
+                    </span>
                   </div>
                   
                   {prompt.description && (
-                    <p className="text-sm text-gray-600 mb-3">{prompt.description}</p>
+                    <p className="text-gray-600 mb-4 text-sm">{prompt.description}</p>
                   )}
                   
-                  <div className="text-xs text-gray-500 mb-3">
-                    <div>Created: {formatDate(prompt.created_at)} by {prompt.author}</div>
+                  <div className="text-xs text-gray-500 mb-4 space-y-1">
+                    <div className="flex items-center space-x-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Created: {formatDate(prompt.created_at)} by {prompt.author}</span>
+                    </div>
                     {prompt.change_comment && (
-                      <div className="mt-1 italic">"{prompt.change_comment}"</div>
+                      <div className="flex items-start space-x-2">
+                        <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2h-3l-4 4z" />
+                        </svg>
+                        <span className="italic">"{prompt.change_comment}"</span>
+                      </div>
                     )}
                   </div>
 
                   {/* Tags */}
                   {prompt.tags && prompt.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {prompt.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded"
+                          className="inline-flex px-3 py-1 text-xs bg-gradient-to-r from-gray-100 to-gray-50 text-gray-700 rounded-full border border-gray-200"
                         >
-                          {tag}
+                          #{tag}
                         </span>
                       ))}
                     </div>
                   )}
 
-                  {/* Content Preview with Chunks */}
-                  <div className="bg-gray-50 rounded p-3 mb-3">
+                  {/* Content Preview with Enhanced Chunks */}
+                  <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-200/50">
                     {prompt.chunks && prompt.chunks.length > 1 ? (
-                      <div className="space-y-2">
-                        <div className="text-xs text-gray-500 mb-2">
-                          {prompt.chunks.length} blocks:
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          </svg>
+                          <span className="font-medium">{prompt.chunks.length} blocks</span>
                         </div>
                         {prompt.chunks.map((chunk, index) => (
-                          <div key={chunk.id} className="bg-white rounded p-2 border-l-2 border-okpo-300">
-                            <div className="text-xs font-medium text-okpo-600 mb-1">
-                              Block {index + 1}
+                          <div key={chunk.id} className="chunk-block">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <div className="w-6 h-6 bg-gradient-to-br from-okpo-500 to-okpo-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                {index + 1}
+                              </div>
+                              <span className="text-sm font-medium text-okpo-700">Block {index + 1}</span>
                             </div>
-                            <div className="text-xs font-mono text-gray-700">
-                              {chunk.content.length > 100 
-                                ? chunk.content.substring(0, 100) + '...'
+                            <div className="text-xs font-mono text-gray-700 bg-white/70 rounded-lg p-3 border border-gray-100">
+                              {chunk.content.length > 120 
+                                ? chunk.content.substring(0, 120) + '...'
                                 : chunk.content
                               }
                             </div>
@@ -162,35 +206,52 @@ export default function PromptList({ prompts, layerTypes, onEdit, onRefresh }) {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-xs font-mono text-gray-700 line-clamp-3">
-                        {prompt.content.length > 150 
-                          ? prompt.content.substring(0, 150) + '...'
-                          : prompt.content
-                        }
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span className="font-medium">Single block</span>
+                        </div>
+                        <div className="text-xs font-mono text-gray-700 bg-white/70 rounded-lg p-3 border border-gray-100">
+                          {prompt.content.length > 200 
+                            ? prompt.content.substring(0, 200) + '...'
+                            : prompt.content
+                          }
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-col space-y-2 ml-4">
+                {/* Enhanced Actions */}
+                <div className="flex flex-col space-y-2 ml-6">
                   <button
                     onClick={() => onEdit(prompt)}
-                    className="btn-primary text-sm"
+                    className="btn-primary text-sm flex items-center space-x-2"
                   >
-                    Edit
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span>Edit</span>
                   </button>
                   <button
                     onClick={() => handleViewVersions(prompt.id)}
-                    className="btn-secondary text-sm"
+                    className="btn-secondary text-sm flex items-center space-x-2"
                   >
-                    Versions
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Versions</span>
                   </button>
                   <button
                     onClick={() => handleDeletePrompt(prompt)}
-                    className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+                    className="btn-danger text-sm flex items-center space-x-2"
                   >
-                    Delete
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span>Delete</span>
                   </button>
                 </div>
               </div>
@@ -199,10 +260,17 @@ export default function PromptList({ prompts, layerTypes, onEdit, onRefresh }) {
         )}
       </div>
 
-      {/* Summary */}
+      {/* Enhanced Summary */}
       {filteredPrompts.length > 0 && (
-        <div className="text-sm text-gray-500 text-center pt-4 border-t border-gray-200">
-          Showing {filteredPrompts.length} of {prompts.length} prompts
+        <div className="card p-4">
+          <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
+            <div className="flex items-center space-x-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span>Showing <strong>{filteredPrompts.length}</strong> of <strong>{prompts.length}</strong> prompts</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

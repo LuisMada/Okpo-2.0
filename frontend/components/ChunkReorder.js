@@ -65,15 +65,25 @@ export default function ChunkReorder({ chunks, layerType, onOrderChange }) {
   }
 
   return (
-    <div className="mt-4 border-t border-gray-200 pt-4">
-      <h5 className="text-sm font-medium text-gray-700 mb-3 flex items-center">
-        <span className={getLayerBadgeClass(layerType)}>
-          {layerType}
-        </span>
-        <span className="ml-2">Reorder Blocks ({chunks.length} blocks)</span>
-      </h5>
+    <div className="mt-6 border-t border-gray-200/50 pt-6">
+      <div className="flex items-center space-x-3 mb-4">
+        <div className="bg-gradient-to-br from-okpo-100 to-okpo-50 rounded-lg p-2">
+          <svg className="w-5 h-5 text-okpo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+          </svg>
+        </div>
+        <div className="flex-1">
+          <h5 className="text-sm font-semibold text-gray-700 flex items-center space-x-2">
+            <span className={getLayerBadgeClass(layerType)}>
+              {layerType}
+            </span>
+            <span>Reorder Blocks ({chunks.length} blocks)</span>
+          </h5>
+          <p className="text-xs text-gray-500 mt-1">Drag blocks or use arrow buttons to reorder</p>
+        </div>
+      </div>
       
-      <div className="space-y-2">
+      <div className="space-y-3">
         {chunkOrder.map((chunkId, index) => {
           const chunk = getChunkById(chunkId)
           if (!chunk) return null
@@ -86,36 +96,41 @@ export default function ChunkReorder({ chunks, layerType, onOrderChange }) {
               onDragEnd={handleDragEnd}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, index)}
-              className={`bg-gray-50 rounded-lg p-3 border-2 cursor-move transition-all duration-200 ${
+              className={`chunk-block cursor-move transition-all duration-200 ${
                 draggedItem?.chunkId === chunkId 
-                  ? 'border-okpo-400 shadow-lg' 
-                  : 'border-gray-200 hover:border-okpo-300'
+                  ? 'ring-2 ring-okpo-400 shadow-xl transform scale-105' 
+                  : 'hover:shadow-lg hover:ring-1 hover:ring-okpo-300'
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
-                    </svg>
-                    <span className="text-sm font-medium text-gray-900">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="drag-handle">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                      </svg>
+                    </div>
+                    <div className="w-7 h-7 bg-gradient-to-br from-okpo-500 to-okpo-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                      {index + 1}
+                    </div>
+                    <span className="text-sm font-semibold text-gray-900">
                       Block {index + 1}
                     </span>
                   </div>
-                  <div className="text-xs font-mono text-gray-700 bg-white rounded p-2 max-h-20 overflow-y-auto">
+                  <div className="text-xs font-mono text-gray-700 bg-white/80 rounded-lg p-3 border border-gray-200/50 max-h-24 overflow-y-auto">
                     {chunk.content}
                   </div>
                 </div>
                 
-                {/* Fallback Move Controls for mobile/accessibility */}
-                <div className="flex flex-col space-y-1 ml-3">
+                {/* Enhanced Move Controls */}
+                <div className="flex flex-col space-y-1 ml-4">
                   <button
                     onClick={() => moveUp(index)}
                     disabled={index === 0}
-                    className={`p-1 rounded text-xs ${
+                    className={`p-2 rounded-lg text-xs transition-all duration-200 ${
                       index === 0 
-                        ? 'text-gray-300 cursor-not-allowed' 
-                        : 'text-gray-600 hover:text-okpo-600 hover:bg-okpo-50'
+                        ? 'text-gray-300 cursor-not-allowed bg-gray-50' 
+                        : 'text-gray-600 hover:text-okpo-600 hover:bg-okpo-50 bg-white shadow-sm hover:shadow-md'
                     }`}
                     title="Move up"
                   >
@@ -126,10 +141,10 @@ export default function ChunkReorder({ chunks, layerType, onOrderChange }) {
                   <button
                     onClick={() => moveDown(index)}
                     disabled={index === chunkOrder.length - 1}
-                    className={`p-1 rounded text-xs ${
+                    className={`p-2 rounded-lg text-xs transition-all duration-200 ${
                       index === chunkOrder.length - 1 
-                        ? 'text-gray-300 cursor-not-allowed' 
-                        : 'text-gray-600 hover:text-okpo-600 hover:bg-okpo-50'
+                        ? 'text-gray-300 cursor-not-allowed bg-gray-50' 
+                        : 'text-gray-600 hover:text-okpo-600 hover:bg-okpo-50 bg-white shadow-sm hover:shadow-md'
                     }`}
                     title="Move down"
                   >
@@ -144,8 +159,13 @@ export default function ChunkReorder({ chunks, layerType, onOrderChange }) {
         })}
       </div>
       
-      <div className="text-xs text-gray-500 mt-2">
-        <span className="font-medium">💡 Drag blocks to reorder</span> or use ↑ ↓ buttons. Changes apply to the compiled output.
+      <div className="flex items-center space-x-2 mt-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200/50">
+        <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div className="text-xs text-blue-700">
+          <span className="font-medium">Pro tip:</span> Drag blocks to reorder them, or use the arrow buttons. Changes apply to the compiled output instantly.
+        </div>
       </div>
     </div>
   )

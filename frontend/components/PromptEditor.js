@@ -111,23 +111,45 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
     return `layer-badge layer-${layerType}`
   }
 
+  const getCharacterCount = () => {
+    const count = formData.content.length
+    const chunks = formData.content.includes('\n\n') 
+      ? formData.content.split('\n\n').filter(chunk => chunk.trim()).length 
+      : 1
+    return { count, chunks }
+  }
+
+  const { count: charCount, chunks: chunkCount } = getCharacterCount()
+
   return (
-    <div className="card">
+    <div className="card animate-fade-in">
       <div className="flex justify-between items-start mb-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            {isEdit ? `Edit Prompt: ${prompt.name}` : 'Create New Prompt'}
-          </h3>
-          {isEdit && (
-            <div className="flex items-center space-x-2 mt-2">
-              <span className={getLayerBadgeClass(prompt.layer_type)}>
-                {prompt.layer_type}
-              </span>
-              <span className="text-sm text-gray-500">v{prompt.version}</span>
-            </div>
-          )}
+        <div className="flex items-center space-x-4">
+          <div className="bg-gradient-to-br from-okpo-500 to-okpo-600 rounded-xl p-3 shadow-lg">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">
+              {isEdit ? `Edit Prompt: ${prompt.name}` : 'Create New Prompt'}
+            </h3>
+            {isEdit && (
+              <div className="flex items-center space-x-3 mt-2">
+                <span className={getLayerBadgeClass(prompt.layer_type)}>
+                  {prompt.layer_type}
+                </span>
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  v{prompt.version}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
-        <button onClick={onCancel} className="text-gray-400 hover:text-gray-600">
+        <button 
+          onClick={onCancel} 
+          className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-all duration-200"
+        >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -135,117 +157,153 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Prompt Name *
-          </label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            className="input-field"
-            placeholder="e.g., Global Safety Rules"
-            required
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
-          </label>
-          <input
-            type="text"
-            value={formData.description}
-            onChange={(e) => handleInputChange('description', e.target.value)}
-            className="input-field"
-            placeholder="Brief description of this prompt's purpose"
-          />
+        {/* Name & Description */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Prompt Name *
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              className="input-field"
+              placeholder="e.g., Global Safety Rules"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Description
+            </label>
+            <input
+              type="text"
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              className="input-field"
+              placeholder="Brief description of this prompt's purpose"
+            />
+          </div>
         </div>
 
         {/* Layer Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Layer Type *
           </label>
-          <select
-            value={formData.layer_type}
-            onChange={(e) => handleInputChange('layer_type', e.target.value)}
-            className="input-field"
-            required
-          >
-            {layerTypes.map((layer) => (
-              <option key={layer.name} value={layer.name}>
-                {layer.name.charAt(0).toUpperCase() + layer.name.slice(1)} - {layer.description}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              value={formData.layer_type}
+              onChange={(e) => handleInputChange('layer_type', e.target.value)}
+              className="input-field pr-10"
+              required
+            >
+              {layerTypes.map((layer) => (
+                <option key={layer.name} value={layer.name}>
+                  {layer.name.charAt(0).toUpperCase() + layer.name.slice(1)} - {layer.description}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         {/* Content */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Prompt Content *
           </label>
           <textarea
             value={formData.content}
             onChange={(e) => handleInputChange('content', e.target.value)}
             className="textarea-field"
-            rows="8"
+            rows="10"
             placeholder="Enter the prompt logic here..."
             required
           />
-          <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
-            <span>{formData.content.length} characters</span>
-            {formData.content.includes('\n\n') && (
-              <span className="text-okpo-600">
-                Will create {formData.content.split('\n\n').filter(chunk => chunk.trim()).length} blocks
-              </span>
-            )}
+          <div className="flex justify-between items-center mt-2">
+            <div className="flex items-center space-x-4 text-sm text-gray-600">
+              <div className="flex items-center space-x-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>{charCount} characters</span>
+              </div>
+              {chunkCount > 1 && (
+                <div className="flex items-center space-x-1 text-okpo-600 font-medium">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                  <span>Will create {chunkCount} blocks</span>
+                </div>
+              )}
+            </div>
           </div>
-          {formData.content.includes('\n\n') && (
-            <div className="mt-2 text-xs text-gray-600 bg-blue-50 p-2 rounded">
-              💡 <strong>Auto-chunking:</strong> Content will be split into reorderable blocks at double line breaks (paragraph separations)
+          {chunkCount > 1 && (
+            <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50">
+              <div className="flex items-start space-x-3">
+                <div className="bg-blue-500 rounded-full p-1 flex-shrink-0 mt-0.5">
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="text-sm text-blue-800">
+                  <span className="font-semibold">Auto-chunking:</span> Content will be split into reorderable blocks at double line breaks (paragraph separations)
+                </div>
+              </div>
             </div>
           )}
         </div>
 
         {/* Tags */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Tags
           </label>
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap gap-2 mb-3">
             {formData.tags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-gray-100 to-gray-50 text-gray-800 border border-gray-200 shadow-sm"
               >
-                {tag}
+                #{tag}
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
-                  className="ml-1 text-gray-400 hover:text-gray-600"
+                  className="ml-2 text-gray-400 hover:text-red-500 transition-colors duration-200"
                 >
-                  ×
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </span>
             ))}
           </div>
           <div className="flex space-x-2">
-            <input
-              type="text"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-              className="input-field"
-              placeholder="Add tag..."
-            />
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                className="input-field pr-10"
+                placeholder="Add tag..."
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+              </div>
+            </div>
             <button
               type="button"
               onClick={handleAddTag}
               className="btn-secondary"
+              disabled={!tagInput.trim() || formData.tags.includes(tagInput.trim())}
             >
               Add
             </button>
@@ -254,7 +312,7 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
 
         {/* Change Comment */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Change Comment *
           </label>
           <textarea
@@ -265,13 +323,16 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
             placeholder={isEdit ? "Explain what changed and why..." : "Initial creation of this prompt"}
             required
           />
-          <div className="text-sm text-gray-500 mt-1">
-            Required for version tracking and audit trail
+          <div className="flex items-center space-x-2 text-sm text-gray-600 mt-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Required for version tracking and audit trail</span>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
           <button
             type="button"
             onClick={onCancel}
@@ -285,7 +346,17 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
             className="btn-primary"
             disabled={saving}
           >
-            {saving ? 'Saving...' : (isEdit ? 'Save New Version' : 'Create Prompt')}
+            {saving ? (
+              <>
+                <div className="loading-spinner w-4 h-4 mr-2"></div>
+                Saving...
+              </>
+            ) : (
+              <>
+                
+                {isEdit ? 'Save New Version' : 'Create Prompt'}
+              </>
+            )}
           </button>
         </div>
       </form>
