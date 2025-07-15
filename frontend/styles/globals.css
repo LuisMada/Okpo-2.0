@@ -58,6 +58,19 @@
   .card-hover {
     @apply hover:transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300;
   }
+
+  /* New card structure for full-width blocks */
+  .card-container {
+    @apply bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 transition-all duration-200 hover:shadow-xl hover:bg-white/80 card-hover overflow-hidden;
+  }
+
+  .card-header {
+    @apply p-6 flex justify-between items-start;
+  }
+
+  .card-content {
+    @apply border-t border-gray-200/50 bg-gradient-to-br from-gray-50/50 to-white/50;
+  }
   
   .input-field {
     @apply w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-okpo-500/50 focus:border-okpo-500 transition-all duration-200 bg-white/50 backdrop-blur-sm placeholder-gray-400;
@@ -113,6 +126,11 @@
 
   .chunk-block {
     @apply bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200;
+  }
+
+  /* Full-width chunk blocks */
+  .chunk-block-full {
+    @apply py-4 hover:bg-white/30 transition-all duration-200 border-b border-gray-200/30 last:border-b-0;
   }
 
   .drag-handle {
