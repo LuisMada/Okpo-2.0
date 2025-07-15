@@ -212,51 +212,22 @@ export default function PromptList({ prompts, layerTypes, onEdit, onRefresh }) {
                 </div>
               </div>
 
-              {/* Content Preview with Full-Width Blocks */}
+              {/* Content Preview */}
               <div className="card-content">
-                {prompt.chunks && prompt.chunks.length > 1 ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3 px-6 pt-3">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                      </svg>
-                      <span className="font-medium ">{prompt.chunks.length} blocks</span>
-                    </div>
-                    {prompt.chunks.map((chunk, index) => (
-                      <div key={chunk.id} className="chunk-block-full">
-                        <div className="flex items-center space-x-2 mb-2 px-6">
-                          <div className="w-6 h-6 bg-gradient-to-br from-okpo-500 to-okpo-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                            {index + 1}
-                          </div>
-                          <span className="text-sm font-medium text-okpo-700">Block {index + 1}</span>
-                        </div>
-                        <div className="text-xs font-mono text-gray-700 bg-white/70 rounded-lg mx-6 p-3 border border-gray-100">
-                          {chunk.content.length > 120 
-                            ? chunk.content.substring(0, 120) + '...'
-                            : chunk.content
-                          }
-                        </div>
-                      </div>
-                    ))}
+                <div className="px-6 py-4">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span className="font-medium">Content Preview</span>
                   </div>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2 px-6 pt-3">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span className="font-medium">Single block</span>
-                    </div>
-                    <div className="chunk-block-full">
-                      <div className="text-xs font-mono text-gray-700 bg-white/70 rounded-lg mx-6 p-3 border border-gray-100">
-                        {prompt.content.length > 200 
-                          ? prompt.content.substring(0, 200) + '...'
-                          : prompt.content
-                        }
-                      </div>
-                    </div>
+                  <div className="text-xs font-mono text-gray-700 bg-white/70 rounded-lg p-3 border border-gray-100">
+                    {prompt.content.length > 200 
+                      ? prompt.content.substring(0, 200) + '...'
+                      : prompt.content
+                    }
                   </div>
-                )}
+                </div>
               </div>
             </div>
           ))

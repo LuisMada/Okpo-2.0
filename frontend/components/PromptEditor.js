@@ -112,14 +112,10 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
   }
 
   const getCharacterCount = () => {
-    const count = formData.content.length
-    const chunks = formData.content.includes('\n\n') 
-      ? formData.content.split('\n\n').filter(chunk => chunk.trim()).length 
-      : 1
-    return { count, chunks }
+    return formData.content.length
   }
 
-  const { count: charCount, chunks: chunkCount } = getCharacterCount()
+  const charCount = getCharacterCount()
 
   return (
     <div className="card animate-fade-in">
@@ -226,37 +222,13 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
             required
           />
           <div className="flex justify-between items-center mt-2">
-            <div className="flex items-center space-x-4 text-sm text-gray-600">
-              <div className="flex items-center space-x-1">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>{charCount} characters</span>
-              </div>
-              {chunkCount > 1 && (
-                <div className="flex items-center space-x-1 text-okpo-600 font-medium">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                  <span>Will create {chunkCount} blocks</span>
-                </div>
-              )}
+            <div className="flex items-center space-x-1 text-sm text-gray-600">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span>{charCount} characters</span>
             </div>
           </div>
-          {chunkCount > 1 && (
-            <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50">
-              <div className="flex items-start space-x-3">
-                <div className="bg-blue-500 rounded-full p-1 flex-shrink-0 mt-0.5">
-                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="text-sm text-blue-800">
-                  <span className="font-semibold">Auto-chunking:</span> Content will be split into reorderable blocks at double line breaks (paragraph separations)
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Tags */}
@@ -353,7 +325,6 @@ export default function PromptEditor({ prompt, layerTypes, onSave, onCancel }) {
               </>
             ) : (
               <>
-                
                 {isEdit ? 'Save New Version' : 'Create Prompt'}
               </>
             )}

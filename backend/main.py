@@ -55,26 +55,6 @@ class LayerType(BaseModel):
 # In-memory storage (JSON file persistence)
 DATA_FILE = "prompt_data.json"
 
-def auto_chunk_content(content):
-    """Automatically chunk content by double line breaks"""
-    if not content:
-        return []
-    
-    # Split by double line breaks and clean up
-    chunks = [chunk.strip() for chunk in content.split('\n\n') if chunk.strip()]
-    
-    # Label chunks as Block 1, Block 2, etc.
-    labeled_chunks = []
-    for i, chunk in enumerate(chunks, 1):
-        labeled_chunks.append({
-            "id": f"block_{i}",
-            "label": f"Block {i}",
-            "content": chunk,
-            "order": i
-        })
-    
-    return labeled_chunks
-
 def load_data():
     """Load data from JSON file or return default structure"""
     if os.path.exists(DATA_FILE):
@@ -110,15 +90,17 @@ def save_data(data):
 # Initialize data
 data_store = load_data()
 
-# Migrate existing prompts to include chunks if missing
+# Clean up existing data - remove chunks from prompts and chunk_orders from stacks
 for prompt_id, prompt in data_store["prompts"].items():
-    if "chunks" not in prompt:
-        prompt["chunks"] = auto_chunk_content(prompt.get("content", ""))
+    if "chunks" in prompt:
+        del prompt["chunks"]
 
-# Migrate existing stacks to include chunk_orders if missing  
 for stack_id, stack in data_store["stacks"].items():
-    if "chunk_orders" not in stack:
-        stack["chunk_orders"] = {}
+    if "chunk_orders" in stack:
+        del stack["chunk_orders"]
+
+# Save cleaned data
+save_data(data_store)
 
 @app.get("/")
 async def root():
@@ -171,7 +153,7 @@ async def get_prompt_versions(prompt_id: str):
 
 @app.post("/api/prompts")
 async def create_prompt(prompt_data: dict):
-    """Create a new prompt block with automatic chunking"""
+    """Create a new prompt block"""
     
     # Extract data from request body
     name = prompt_data.get('name', '').strip()
@@ -194,9 +176,6 @@ async def create_prompt(prompt_data: dict):
     if layer_type not in data_store["layer_types"]:
         raise HTTPException(status_code=400, detail="Invalid layer type")
     
-    # Auto-chunk the content
-    chunks = auto_chunk_content(content)
-    
     # Generate new version
     version = 1
     if parent_id and parent_id in data_store["prompts"]:
@@ -208,8 +187,7 @@ async def create_prompt(prompt_data: dict):
         "id": prompt_id,
         "name": name,
         "description": description,
-        "content": content,  # Keep original content
-        "chunks": chunks,   # Add chunked version
+        "content": content,
         "layer_type": layer_type,
         "version": version,
         "author": author,
@@ -228,13 +206,12 @@ async def create_prompt(prompt_data: dict):
 
 @app.post("/api/stacks")
 async def create_stack(stack_data: dict):
-    """Create a new prompt stack with chunk ordering"""
+    """Create a new prompt stack"""
     
     # Extract data from request body
     name = stack_data.get('name', '').strip()
     description = stack_data.get('description', '').strip()
     prompts = stack_data.get('prompts', {})  # layer_type -> prompt_id
-    chunk_orders = stack_data.get('chunk_orders', {})  # layer_type -> [chunk_ids]
     author = stack_data.get('author', 'User')
     weights = stack_data.get('weights', {})
     locks = stack_data.get('locks', {})
@@ -262,7 +239,6 @@ async def create_stack(stack_data: dict):
         "name": name,
         "description": description,
         "prompts": prompts,
-        "chunk_orders": chunk_orders,  # Store chunk ordering
         "weights": weights,
         "locks": locks,
         "created_at": datetime.now().isoformat(),
@@ -338,7 +314,7 @@ async def delete_stack(stack_id: str):
 
 @app.get("/api/stacks/{stack_id}/compile")
 async def compile_stack(stack_id: str):
-    """Compile a prompt stack into final prompt text with chunk ordering"""
+    """Compile a prompt stack into final prompt text"""
     if stack_id not in data_store["stacks"]:
         raise HTTPException(status_code=404, detail="Stack not found")
     
@@ -357,41 +333,10 @@ async def compile_stack(stack_id: str):
                 weight = stack["weights"].get(layer_name, 1)
                 locked = stack["locks"].get(layer_name, False)
                 
-                # Get chunks and apply custom ordering if specified
-                chunks = prompt.get("chunks", [])
-                chunk_order = stack.get("chunk_orders", {}).get(layer_name, [])
-                
-                # Reorder chunks if custom order is specified
-                if chunk_order and chunks:
-                    ordered_chunks = []
-                    chunk_dict = {chunk["id"]: chunk for chunk in chunks}
-                    
-                    # Add chunks in specified order
-                    for chunk_id in chunk_order:
-                        if chunk_id in chunk_dict:
-                            ordered_chunks.append(chunk_dict[chunk_id])
-                    
-                    # Add any missing chunks at the end
-                    for chunk in chunks:
-                        if chunk["id"] not in chunk_order:
-                            ordered_chunks.append(chunk)
-                    
-                    chunks = ordered_chunks
-                
-                # Compile chunks into content
-                if chunks:
-                    compiled_content = "\n\n".join([chunk["content"] for chunk in chunks])
-                    chunk_info = [{"id": chunk["id"], "label": chunk["label"]} for chunk in chunks]
-                else:
-                    # Fallback to original content if no chunks
-                    compiled_content = prompt["content"]
-                    chunk_info = []
-                
                 section = {
                     "layer": layer_name,
                     "prompt_name": prompt["name"],
-                    "content": compiled_content,
-                    "chunks": chunk_info,
+                    "content": prompt["content"],
                     "weight": weight,
                     "locked": locked
                 }

@@ -135,11 +135,6 @@ export default function StackList({ stacks, onEdit, onRefresh }) {
                   <span className="text-sm font-semibold text-gray-900">
                     {section.prompt_name}
                   </span>
-                  {section.chunks && section.chunks.length > 1 && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-okpo-100 text-okpo-700">
-                      {section.chunks.length} blocks
-                    </span>
-                  )}
                 </div>
                 <div className="flex items-center space-x-3 text-xs text-gray-500">
                   <div className="flex items-center space-x-1">
@@ -159,28 +154,9 @@ export default function StackList({ stacks, onEdit, onRefresh }) {
                 </div>
               </div>
               
-              {/* Show individual chunks if multiple blocks */}
-              {section.chunks && section.chunks.length > 1 ? (
-                <div className="space-y-2">
-                  {section.chunks.map((chunk, chunkIndex) => (
-                    <div key={chunk.id} className="bg-white/80 rounded-lg p-3 border border-gray-200/50">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-5 h-5 bg-gradient-to-br from-okpo-400 to-okpo-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                          {chunkIndex + 1}
-                        </div>
-                        <span className="text-xs font-medium text-okpo-700">Block {chunkIndex + 1}</span>
-                      </div>
-                      <div className="text-xs font-mono text-gray-700 max-h-20 overflow-y-auto">
-                        {section.content.split('\n\n')[chunkIndex] || section.content}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-xs font-mono text-gray-700 bg-white/80 rounded-lg p-3 border border-gray-200/50 max-h-24 overflow-y-auto">
-                  {section.content}
-                </div>
-              )}
+              <div className="text-xs font-mono text-gray-700 bg-white/80 rounded-lg p-3 border border-gray-200/50 max-h-24 overflow-y-auto">
+                {section.content}
+              </div>
             </div>
           ))}
         </div>
