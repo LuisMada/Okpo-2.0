@@ -133,13 +133,37 @@
     @apply bg-gray-200 text-gray-600 group-hover:bg-gray-300;
   }
 
-  /* Sidebar Styles */
+  /* Enhanced Sidebar Styles */
   .sidebar {
-    @apply w-80 bg-white shadow-xl border-r border-gray-200 flex flex-col;
+    @apply bg-white shadow-xl border-r border-gray-200 flex flex-col transition-all duration-300 ease-out relative;
+  }
+
+  .sidebar-collapsed {
+    @apply w-16;
+  }
+
+  .sidebar-expanded {
+    @apply w-80;
+  }
+
+  .sidebar-toggle {
+    @apply absolute -right-3 top-6 bg-white border border-gray-200 rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-200 z-10 group;
+  }
+
+  .sidebar-toggle-icon {
+    @apply w-4 h-4 text-gray-600 transition-transform duration-300;
+  }
+
+  .sidebar-toggle-icon-collapsed {
+    @apply rotate-180;
   }
 
   .sidebar-header {
     @apply p-6 border-b border-gray-200 bg-gradient-to-br from-white to-gray-50/50;
+  }
+
+  .sidebar-header-collapsed {
+    @apply px-3;
   }
 
   .sidebar-content {
@@ -148,6 +172,34 @@
 
   .sidebar-nav {
     @apply p-4 space-y-2;
+  }
+
+  .sidebar-nav-collapsed {
+    @apply px-2;
+  }
+
+  .sidebar-nav-item {
+    @apply w-full flex items-center py-3 rounded-xl text-left transition-all duration-200 relative group;
+  }
+
+  .sidebar-nav-item-expanded {
+    @apply space-x-3 px-4;
+  }
+
+  .sidebar-nav-item-collapsed {
+    @apply justify-center px-2;
+  }
+
+  .sidebar-nav-item-active {
+    @apply bg-gradient-to-r from-okpo-500 to-okpo-600 text-white shadow-lg shadow-okpo-500/25;
+  }
+
+  .sidebar-nav-item-inactive {
+    @apply text-gray-700 hover:bg-gray-100 hover:text-gray-900;
+  }
+
+  .sidebar-nav-tooltip {
+    @apply absolute left-full ml-2 px-2 py-1 rounded text-xs font-medium bg-gray-900 text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none;
   }
 
   .sidebar-stats {
@@ -164,7 +216,27 @@
   }
 
   .content-grid {
-    @apply grid grid-cols-1 lg:grid-cols-2 gap-8 h-full;
+    @apply h-full transition-all duration-300 ease-out;
+  }
+
+  .content-grid-two-column {
+    @apply grid grid-cols-1 xl:grid-cols-2 gap-8;
+  }
+
+  .content-grid-full-width {
+    @apply flex flex-col;
+  }
+
+  .content-panel {
+    @apply flex flex-col;
+  }
+
+  .content-panel-full-width {
+    @apply w-full;
+  }
+
+  .content-panel-editor {
+    @apply animate-fade-in;
   }
 
   .empty-state {
@@ -226,5 +298,183 @@
 
   .card-shadow-hover {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Dynamic Layout Animations */
+  .layout-transition {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .panel-enter {
+    animation: panelSlideIn 0.3s ease-out;
+  }
+
+  .panel-exit {
+    animation: panelSlideOut 0.3s ease-out;
+  }
+
+  @keyframes panelSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes panelSlideOut {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+  }
+
+  /* Responsive Grid Adjustments */
+  @media (max-width: 1279px) {
+    .content-grid-two-column {
+      @apply grid-cols-1 gap-6;
+    }
+    
+    .content-panel-editor {
+      @apply mt-6;
+    }
+  }
+
+  /* Mobile Sidebar Adjustments */
+  @media (max-width: 768px) {
+    .sidebar-expanded {
+      @apply w-72;
+    }
+    
+    .sidebar-collapsed {
+      @apply w-14;
+    }
+    
+    .content-header {
+      @apply px-4 py-4;
+    }
+    
+    .content-main {
+      @apply p-4;
+    }
+  }
+
+  /* Enhanced Button States for Dynamic Actions */
+  .btn-close {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-2 px-4 rounded-lg transition-all duration-200 border border-gray-200 shadow-sm hover:shadow-md;
+  }
+
+  .btn-toggle {
+    @apply bg-white border border-gray-200 rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-200 group;
+  }
+
+  /* Editor Panel Specific Styles */
+  .editor-panel {
+    @apply bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 transition-all duration-200;
+  }
+
+  .editor-panel-enter {
+    animation: editorSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .editor-panel-exit {
+    animation: editorSlideOut 0.3s ease-in;
+  }
+
+  @keyframes editorSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  @keyframes editorSlideOut {
+    from {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(30px) scale(0.95);
+    }
+  }
+
+  /* Improved List Expansions */
+  .list-expand {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .list-item-hover {
+    @apply hover:bg-white/50 hover:shadow-md hover:scale-[1.01] transition-all duration-200;
+  }
+
+  /* Status Indicators */
+  .status-indicator {
+    @apply inline-flex items-center space-x-1 text-xs font-medium;
+  }
+
+  .status-active {
+    @apply text-green-600;
+  }
+
+  .status-editing {
+    @apply text-blue-600;
+  }
+
+  .status-saved {
+    @apply text-gray-600;
+  }
+
+  /* Dynamic Content Adjustments */
+  .content-area-full {
+    @apply w-full max-w-none;
+  }
+
+  .content-area-split {
+    @apply max-w-none;
+  }
+
+  /* Notification Styles for State Changes */
+  .notification-slide-in {
+    animation: slideInFromRight 0.3s ease-out;
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Improved Focus Management */
+  .focus-visible {
+    @apply focus:outline-none focus:ring-2 focus:ring-okpo-500 focus:ring-offset-2 focus:ring-opacity-50;
+  }
+
+  /* Print Styles */
+  @media print {
+    .sidebar,
+    .btn-primary,
+    .btn-secondary {
+      @apply hidden;
+    }
+    
+    .content-main {
+      @apply p-0 max-w-none;
+    }
   }
 }
